@@ -22,17 +22,34 @@ composer:
     paths:
       - vendor/
 
+npm:
+  image: $BUILDIMAGE
+  variables:
+    npm_config_cache: .npm
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+  script:
+    - npm ci --no-audit --no-fund --prefer-offline --loglevel=error
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - node_modules/
+
 test:
   image: $BUILDIMAGE
   coverage: '/^\s*Lines:\s*\d+.\d+\%/'
   script:
     - cp -n .env.example .env
-    - npm ci --prefer-offline --no-audit --progress=false --no-fund
     - npm run build
     - php artisan key:generate
     - XDEBUG_MODE=coverage php artisan test --parallel --coverage-text --log-junit junit-report.xml --coverage-cobertura cobertura-report.xml
   needs:
     - composer
+    - npm
   artifacts:
     when: always
     expire_in: 1month
@@ -66,6 +83,9 @@ static analysis:
 
 code style:
   extends: .analysis
+  needs:
+    - composer
+    - npm
   script:
     - ./vendor/bin/pint --test
     - npm run format:check
