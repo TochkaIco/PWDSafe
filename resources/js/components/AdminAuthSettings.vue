@@ -8,14 +8,17 @@
         >
             <p class="font-semibold">Environment variable override active</p>
             <p class="mt-1">
-                The <code>USE_LDAP=true</code> environment variable is set, which forces LDAP
-                authentication regardless of the setting below. To manage authentication from this
-                interface, remove <code>USE_LDAP</code> from your environment and restart the
+                The <code>USE_LDAP=true</code> environment variable is set,
+                which forces LDAP authentication regardless of the setting
+                below. To manage authentication from this interface, remove
+                <code>USE_LDAP</code> from your environment and restart the
                 application.
             </p>
         </div>
 
-        <div class="mb-6 max-w-2xl rounded bg-white p-4 shadow-md dark:bg-gray-700">
+        <div
+            class="mb-6 max-w-2xl rounded bg-white p-4 shadow-md dark:bg-gray-700"
+        >
             <h2 class="mb-4 font-semibold">Authentication method</h2>
             <div class="space-y-3">
                 <label class="flex cursor-pointer items-center gap-3">
@@ -27,7 +30,10 @@
                         class="h-4 w-4 text-blue-600"
                     />
                     <div>
-                        <span class="font-medium text-gray-800 dark:text-gray-200">Internal</span>
+                        <span
+                            class="font-medium text-gray-800 dark:text-gray-200"
+                            >Internal</span
+                        >
                         <p class="text-sm text-gray-500 dark:text-gray-400">
                             Users log in with locally stored credentials.
                         </p>
@@ -42,11 +48,14 @@
                         class="h-4 w-4 text-blue-600"
                     />
                     <div>
-                        <span class="font-medium text-gray-800 dark:text-gray-200">
+                        <span
+                            class="font-medium text-gray-800 dark:text-gray-200"
+                        >
                             LDAP / Active Directory
                         </span>
                         <p class="text-sm text-gray-500 dark:text-gray-400">
-                            Authenticate users against an LDAP or Active Directory server.
+                            Authenticate users against an LDAP or Active
+                            Directory server.
                         </p>
                     </div>
                 </label>
@@ -59,12 +68,14 @@
                         class="h-4 w-4 text-blue-600"
                     />
                     <div>
-                        <span class="font-medium text-gray-800 dark:text-gray-200">
+                        <span
+                            class="font-medium text-gray-800 dark:text-gray-200"
+                        >
                             OIDC / OAuth2
                         </span>
                         <p class="text-sm text-gray-500 dark:text-gray-400">
-                            Single sign-on via an OpenID Connect provider (e.g. Azure AD, Keycloak,
-                            Okta).
+                            Single sign-on via an OpenID Connect provider (e.g.
+                            Azure AD, Keycloak, Okta).
                         </p>
                     </div>
                 </label>
@@ -87,7 +98,8 @@
                         :value="form.ldap_server"
                     ></pwdsafe-input>
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                        Use <code>ldap://</code> or <code>ldaps://</code> prefix.
+                        Use <code>ldap://</code> or
+                        <code>ldaps://</code> prefix.
                     </p>
                 </div>
                 <div>
@@ -117,11 +129,7 @@
                     </p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <input
-                        type="hidden"
-                        name="ldap_use_openldap"
-                        value="0"
-                    />
+                    <input type="hidden" name="ldap_use_openldap" value="0" />
                     <input
                         id="ldap_use_openldap"
                         name="ldap_use_openldap"
@@ -155,27 +163,33 @@
                         class="h-4 w-4 rounded text-blue-600"
                     />
                     <div>
-                        <pwdsafe-label for="ldap_trust_certificate" class="mb-0">
+                        <pwdsafe-label
+                            for="ldap_trust_certificate"
+                            class="mb-0"
+                        >
                             Trust any TLS certificate
                         </pwdsafe-label>
                         <p class="text-xs text-gray-500 dark:text-gray-400">
-                            Accept self-signed or untrusted certificates. Not recommended in
-                            production.
+                            Accept self-signed or untrusted certificates. Not
+                            recommended in production.
                         </p>
                     </div>
                 </div>
                 <div>
-                    <pwdsafe-label for="ldap_certificate">Custom CA certificate (PEM)</pwdsafe-label>
+                    <pwdsafe-label for="ldap_certificate"
+                        >Custom CA certificate (PEM)</pwdsafe-label
+                    >
                     <textarea
                         id="ldap_certificate"
                         name="ldap_certificate"
                         rows="6"
                         placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
-                        class="block w-full rounded border border-gray-300 bg-white px-3 py-2 font-mono text-xs text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-                    >{{ form.ldap_certificate }}</textarea>
+                        class="block w-full rounded border border-gray-300 bg-white px-3 py-2 font-mono text-xs text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+                        >{{ form.ldap_certificate }}</textarea
+                    >
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                        Optional. Paste a PEM-encoded CA certificate to verify the LDAP server's
-                        TLS certificate.
+                        Optional. Paste a PEM-encoded CA certificate to verify
+                        the LDAP server's TLS certificate.
                     </p>
                 </div>
             </div>
@@ -198,12 +212,14 @@
                     ></pwdsafe-input>
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                         The URL of your OIDC provider, <strong>without</strong>
-                        <code>/.well-known/openid-configuration</code>. That path is appended
-                        automatically.
+                        <code>/.well-known/openid-configuration</code>. That
+                        path is appended automatically.
                     </p>
                 </div>
                 <div>
-                    <pwdsafe-label for="oidc_client_id">Client ID</pwdsafe-label>
+                    <pwdsafe-label for="oidc_client_id"
+                        >Client ID</pwdsafe-label
+                    >
                     <pwdsafe-input
                         id="oidc_client_id"
                         name="oidc_client_id"
@@ -213,13 +229,19 @@
                     ></pwdsafe-input>
                 </div>
                 <div>
-                    <pwdsafe-label for="oidc_client_secret">Client secret</pwdsafe-label>
+                    <pwdsafe-label for="oidc_client_secret"
+                        >Client secret</pwdsafe-label
+                    >
                     <pwdsafe-input
                         id="oidc_client_secret"
                         name="oidc_client_secret"
                         type="password"
                         autocomplete="off"
-                        :placeholder="form.has_oidc_client_secret ? 'Secret is set — leave blank to keep it' : 'Enter client secret'"
+                        :placeholder="
+                            form.has_oidc_client_secret
+                                ? 'Secret is set — leave blank to keep it'
+                                : 'Enter client secret'
+                        "
                     ></pwdsafe-input>
                 </div>
                 <div>
@@ -233,11 +255,14 @@
                     ></pwdsafe-input>
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                         Space-separated list of scopes to request. Default:
-                        <code>openid email profile</code>. Use <code>openid email</code> if your
-                        provider does not support the <code>profile</code> scope.
+                        <code>openid email profile</code>. Use
+                        <code>openid email</code> if your provider does not
+                        support the <code>profile</code> scope.
                     </p>
                 </div>
-                <div class="rounded border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-300">
+                <div
+                    class="rounded border border-yellow-300 bg-yellow-50 p-3 text-sm text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-300"
+                >
                     Configure your OIDC provider to allow the redirect URI:
                     <code class="break-all">{{ redirectUri }}</code>
                 </div>

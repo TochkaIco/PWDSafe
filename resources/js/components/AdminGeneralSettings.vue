@@ -2,14 +2,12 @@
     <form method="POST" action="/admin/settings/general">
         <input type="hidden" name="_token" :value="csrf" />
 
-        <div class="mb-6 max-w-2xl rounded bg-white p-4 shadow-md dark:bg-gray-700">
+        <div
+            class="mb-6 max-w-2xl rounded bg-white p-4 shadow-md dark:bg-gray-700"
+        >
             <h2 class="mb-4 font-semibold">Registration</h2>
             <div class="flex items-center gap-3">
-                <input
-                    type="hidden"
-                    name="registration_enabled"
-                    value="0"
-                />
+                <input type="hidden" name="registration_enabled" value="0" />
                 <input
                     id="registration_enabled"
                     name="registration_enabled"
@@ -23,14 +21,17 @@
                         Allow public registration
                     </pwdsafe-label>
                     <p class="text-xs text-gray-500 dark:text-gray-400">
-                        When disabled, only administrators can create new accounts.
-                        Only applies when using internal authentication.
+                        When disabled, only administrators can create new
+                        accounts. Only applies when using internal
+                        authentication.
                     </p>
                 </div>
             </div>
         </div>
 
-        <div class="mb-6 max-w-2xl rounded bg-white p-4 shadow-md dark:bg-gray-700">
+        <div
+            class="mb-6 max-w-2xl rounded bg-white p-4 shadow-md dark:bg-gray-700"
+        >
             <h2 class="mb-4 font-semibold">Private groups</h2>
             <div class="flex items-center gap-3">
                 <input
@@ -51,8 +52,9 @@
                         Allow sharing of private sub-groups
                     </pwdsafe-label>
                     <p class="text-xs text-gray-500 dark:text-gray-400">
-                        When enabled, sub-groups inside a user's private group can have their members managed.
-                        The primary private group itself is never shareable.
+                        When enabled, sub-groups inside a user's private group
+                        can have their members managed. The primary private
+                        group itself is never shareable.
                     </p>
                 </div>
             </div>

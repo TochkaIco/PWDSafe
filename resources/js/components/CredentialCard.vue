@@ -27,7 +27,9 @@
                         rel="noopener noreferrer"
                         title="Visit site"
                     >
-                        <ArrowTopRightOnSquareIcon class="h-5 w-5"></ArrowTopRightOnSquareIcon>
+                        <ArrowTopRightOnSquareIcon
+                            class="h-5 w-5"
+                        ></ArrowTopRightOnSquareIcon>
                     </pwdsafe-button>
                     <ShareModal :credential="credential" />
                     <pwdsafe-modal
@@ -79,12 +81,17 @@
                                         rel="noopener noreferrer"
                                         title="Visit site"
                                     >
-                                        <ArrowTopRightOnSquareIcon class="h-5 w-5"></ArrowTopRightOnSquareIcon>
+                                        <ArrowTopRightOnSquareIcon
+                                            class="h-5 w-5"
+                                        ></ArrowTopRightOnSquareIcon>
                                     </pwdsafe-button>
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <pwdsafe-label for="username" class="mb-1" required
+                                <pwdsafe-label
+                                    for="username"
+                                    class="mb-1"
+                                    required
                                     >Username</pwdsafe-label
                                 >
                                 <pwdsafe-input
@@ -94,14 +101,24 @@
                                 />
                             </div>
                             <div class="mb-2">
-                                <div class="mb-2 flex items-end justify-between">
-                                    <pwdsafe-label for="password" class="mb-1" required>
+                                <div
+                                    class="mb-2 flex items-end justify-between"
+                                >
+                                    <pwdsafe-label
+                                        for="password"
+                                        class="mb-1"
+                                        required
+                                    >
                                         Password
                                     </pwdsafe-label>
                                     <pwdsafe-passwordgen
                                         v-if="canUpdate"
                                         button-size="small"
-                                        @generated="(event) => { password = event }"
+                                        @generated="
+                                            (event) => {
+                                                password = event
+                                            }
+                                        "
                                     />
                                 </div>
                                 <div class="flex gap-x-2">
@@ -110,9 +127,11 @@
                                         v-if="!passwordVisible"
                                         type="password"
                                         :value="password"
-                                        :placeholder="!passwordLoaded ? 'Loading...' : ''"
+                                        :placeholder="
+                                            !passwordLoaded ? 'Loading...' : ''
+                                        "
                                         readonly
-                                        class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 leading-5 placeholder:text-gray-500 sm:text-sm transition duration-150 ease-in-out disabled:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:disabled:bg-gray-900"
+                                        class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 leading-5 transition duration-150 ease-in-out placeholder:text-gray-500 disabled:bg-gray-200 sm:text-sm dark:border-gray-700 dark:bg-gray-800 dark:disabled:bg-gray-900"
                                     />
                                     <!-- Visible textarea (for viewing/editing) -->
                                     <textarea
@@ -121,10 +140,12 @@
                                         :disabled="!passwordLoaded"
                                         :readonly="!canUpdate"
                                         rows="4"
-                                        class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 leading-5 placeholder:text-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none sm:text-sm transition duration-150 ease-in-out disabled:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:disabled:bg-gray-900"
+                                        class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 leading-5 transition duration-150 ease-in-out placeholder:text-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none disabled:bg-gray-200 sm:text-sm dark:border-gray-700 dark:bg-gray-800 dark:disabled:bg-gray-900"
                                     ></textarea>
                                     <!-- Copy + toggle buttons -->
-                                    <div class="flex flex-col gap-y-1 flex-shrink-0">
+                                    <div
+                                        class="flex flex-shrink-0 flex-col gap-y-1"
+                                    >
                                         <pwdsafe-button
                                             type="button"
                                             theme="secondary"
@@ -133,17 +154,29 @@
                                             @click="copyPasswordFromModal"
                                             title="Copy password"
                                         >
-                                            <ClipboardDocumentListIcon class="h-4 w-4" />
+                                            <ClipboardDocumentListIcon
+                                                class="h-4 w-4"
+                                            />
                                         </pwdsafe-button>
                                         <pwdsafe-button
                                             type="button"
                                             theme="secondary"
                                             size="small"
                                             :disabled="!passwordLoaded"
-                                            @click="passwordVisible = !passwordVisible"
-                                            :title="passwordVisible ? 'Hide password' : 'Show password'"
+                                            @click="
+                                                passwordVisible =
+                                                    !passwordVisible
+                                            "
+                                            :title="
+                                                passwordVisible
+                                                    ? 'Hide password'
+                                                    : 'Show password'
+                                            "
                                         >
-                                            <EyeSlashIcon v-if="passwordVisible" class="h-4 w-4" />
+                                            <EyeSlashIcon
+                                                v-if="passwordVisible"
+                                                class="h-4 w-4"
+                                            />
                                             <EyeIcon v-else class="h-4 w-4" />
                                         </pwdsafe-button>
                                     </div>

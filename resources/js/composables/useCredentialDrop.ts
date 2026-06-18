@@ -34,10 +34,14 @@ export function useCredentialDrop(targetGroupId: MaybeRefOrGetter<number>) {
         isDragOver.value = false
 
         const groupId = toValue(targetGroupId)
-        if (!groupId) { return }
+        if (!groupId) {
+            return
+        }
 
         const raw = event.dataTransfer?.getData('application/json')
-        if (!raw) { return }
+        if (!raw) {
+            return
+        }
 
         let data: DropPayload
         try {
@@ -46,20 +50,32 @@ export function useCredentialDrop(targetGroupId: MaybeRefOrGetter<number>) {
             return
         }
 
-        if (data.sourceGroupId === groupId) { return }
+        if (data.sourceGroupId === groupId) {
+            return
+        }
 
         try {
             const privkeyPem = await ensurePrivkey()
 
             const pwdResp = await axios.get(`/pwdfor/${data.credentialId}`)
-            const decryptedPassword = await decryptCredential(pwdResp.data.data, privkeyPem)
+            const decryptedPassword = await decryptCredential(
+                pwdResp.data.data,
+                privkeyPem,
+            )
 
-            const pubkeysResp = await axios.get(`/api/groups/${groupId}/pubkeys`)
+            const pubkeysResp = await axios.get(
+                `/api/groups/${groupId}/pubkeys`,
+            )
             const encrypted = await Promise.all(
-                pubkeysResp.data.users.map(async ({ id, pubkey }: { id: number; pubkey: string }) => ({
-                    userid: id,
-                    data: await encryptCredentialV2(decryptedPassword, pubkey),
-                }))
+                pubkeysResp.data.users.map(
+                    async ({ id, pubkey }: { id: number; pubkey: string }) => ({
+                        userid: id,
+                        data: await encryptCredentialV2(
+                            decryptedPassword,
+                            pubkey,
+                        ),
+                    }),
+                ),
             )
 
             await axios.put(`/credential/${data.credentialId}`, {

@@ -10,7 +10,7 @@
         >
             <div
                 v-if="message"
-                class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 flex items-center gap-x-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-lg dark:bg-green-700"
+                class="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-x-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-lg dark:bg-green-700"
             >
                 <CheckIcon class="h-4 w-4 flex-shrink-0" />
                 {{ message }}

@@ -1,29 +1,50 @@
 <template>
     <pwdsafe-modal ref="modalRef">
         <template #trigger="{ openModal }">
-            <pwdsafe-button theme="secondary" class="flex items-center" @click="open(openModal)">
-                <heroicons-arrow-up-on-square-icon class="h-5 w-5 mr-1"></heroicons-arrow-up-on-square-icon>
+            <pwdsafe-button
+                theme="secondary"
+                class="flex items-center"
+                @click="open(openModal)"
+            >
+                <heroicons-arrow-up-on-square-icon
+                    class="mr-1 h-5 w-5"
+                ></heroicons-arrow-up-on-square-icon>
                 Import
             </pwdsafe-button>
         </template>
 
-        <h3 class="text-2xl mb-4">Import credentials</h3>
+        <h3 class="mb-4 text-2xl">Import credentials</h3>
         <p>Import a JSON file containing an array with the following fields:</p>
-        <ul class="ml-10 list-disc my-2">
+        <ul class="my-2 ml-10 list-disc">
             <li>name</li>
             <li>username</li>
             <li>password</li>
             <li>url <em>(optional)</em></li>
             <li>notes <em>(optional)</em></li>
         </ul>
-        <p class="text-red-500 mb-4">Warning: Malformed rows will be skipped.</p>
+        <p class="mb-4 text-red-500">
+            Warning: Malformed rows will be skipped.
+        </p>
 
-        <div v-if="error" class="text-red-600 dark:text-red-400 text-sm mb-3">{{ error }}</div>
-        <div v-if="successMessage" class="text-green-600 dark:text-green-400 text-sm mb-3">{{ successMessage }}</div>
+        <div v-if="error" class="mb-3 text-sm text-red-600 dark:text-red-400">
+            {{ error }}
+        </div>
+        <div
+            v-if="successMessage"
+            class="mb-3 text-sm text-green-600 dark:text-green-400"
+        >
+            {{ successMessage }}
+        </div>
 
         <form @submit.prevent="handleImport">
-            <input type="file" accept=".json,application/json" required ref="fileInput" :disabled="importing" />
-            <div class="flex justify-end mt-8">
+            <input
+                type="file"
+                accept=".json,application/json"
+                required
+                ref="fileInput"
+                :disabled="importing"
+            />
+            <div class="mt-8 flex justify-end">
                 <pwdsafe-button type="submit" :disabled="importing">
                     {{ importing ? 'Importing…' : 'Import' }}
                 </pwdsafe-button>
@@ -84,7 +105,9 @@ const handleImport = async () => {
         const valid = rows.filter((r) => r.name && r.username && r.password)
         const skipped = rows.length - valid.length
 
-        const { data: pubkeysData } = await axios.get(`/api/groups/${props.groupid}/pubkeys`)
+        const { data: pubkeysData } = await axios.get(
+            `/api/groups/${props.groupid}/pubkeys`,
+        )
 
         const credentials = await Promise.all(
             valid.map(async (row) => ({
@@ -95,13 +118,19 @@ const handleImport = async () => {
                 encrypted: await Promise.all(
                     pubkeysData.users.map(async ({ id, pubkey }) => ({
                         userid: id,
-                        data: await encryptCredentialV2(String(row.password), pubkey),
+                        data: await encryptCredentialV2(
+                            String(row.password),
+                            pubkey,
+                        ),
                     })),
                 ),
             })),
         )
 
-        const { data } = await axios.post('/import', { group: props.groupid, credentials })
+        const { data } = await axios.post('/import', {
+            group: props.groupid,
+            credentials,
+        })
 
         successMessage.value =
             skipped > 0

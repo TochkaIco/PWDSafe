@@ -4,7 +4,9 @@
             <h3 class="mb-4 text-2xl">Add credentials</h3>
             <div class="mb-4">
                 <div class="mb-2">
-                    <pwdsafe-label class="mb-1" for="name" required>Name</pwdsafe-label>
+                    <pwdsafe-label class="mb-1" for="name" required
+                        >Name</pwdsafe-label
+                    >
                     <pwdsafe-input
                         type="text"
                         v-model="name"
@@ -25,7 +27,9 @@
                     ></pwdsafe-input>
                 </div>
                 <div class="mb-2">
-                    <pwdsafe-label class="mb-1" for="user" required>Username</pwdsafe-label>
+                    <pwdsafe-label class="mb-1" for="user" required
+                        >Username</pwdsafe-label
+                    >
                     <pwdsafe-input
                         type="text"
                         v-model="user"
@@ -36,21 +40,42 @@
                 </div>
                 <div class="mb-2">
                     <div class="mb-2 flex items-end justify-between gap-x-2">
-                        <pwdsafe-label class="mb-1" for="pass" required>Password</pwdsafe-label>
-                        <pwdsafe-passwordgen @generated="updatePassword"></pwdsafe-passwordgen>
+                        <pwdsafe-label class="mb-1" for="pass" required
+                            >Password</pwdsafe-label
+                        >
+                        <pwdsafe-passwordgen
+                            @generated="updatePassword"
+                        ></pwdsafe-passwordgen>
                     </div>
-                    <TextareaVue v-model="password" id="pass" rows="5" required></TextareaVue>
+                    <TextareaVue
+                        v-model="password"
+                        id="pass"
+                        rows="5"
+                        required
+                    ></TextareaVue>
                 </div>
                 <div class="mb-2">
-                    <pwdsafe-label class="mb-1" for="notes">Notes</pwdsafe-label>
-                    <pwdsafe-textarea v-model="notes" id="notes" rows="5"></pwdsafe-textarea>
+                    <pwdsafe-label class="mb-1" for="notes"
+                        >Notes</pwdsafe-label
+                    >
+                    <pwdsafe-textarea
+                        v-model="notes"
+                        id="notes"
+                        rows="5"
+                    ></pwdsafe-textarea>
                 </div>
             </div>
         </div>
-        <div class="bg-gray-50 dark:border-t dark:border-gray-800 dark:bg-gray-700">
+        <div
+            class="bg-gray-50 dark:border-t dark:border-gray-800 dark:bg-gray-700"
+        >
             <div class="flex justify-end gap-x-2 px-8 py-4">
-                <pwdsafe-button theme="secondary" :href="backlink">Back</pwdsafe-button>
-                <pwdsafe-button type="submit" :disabled="submitting">Add credential</pwdsafe-button>
+                <pwdsafe-button theme="secondary" :href="backlink"
+                    >Back</pwdsafe-button
+                >
+                <pwdsafe-button type="submit" :disabled="submitting"
+                    >Add credential</pwdsafe-button
+                >
             </div>
         </div>
     </form>
@@ -85,7 +110,9 @@ const updatePassword = (event) => {
 const handleSubmit = async () => {
     submitting.value = true
     try {
-        const { data: pubkeysData } = await axios.get(`/api/groups/${props.groupid}/pubkeys`)
+        const { data: pubkeysData } = await axios.get(
+            `/api/groups/${props.groupid}/pubkeys`,
+        )
         const encrypted = await Promise.all(
             pubkeysData.users.map(async ({ id, pubkey }) => ({
                 userid: id,

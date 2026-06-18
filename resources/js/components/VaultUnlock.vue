@@ -1,10 +1,17 @@
 <template>
-    <div class="max-w-sm px-12 py-10 mx-auto shadow-md border bg-white dark:bg-gray-700 dark:border-gray-700 rounded-md">
+    <div
+        class="mx-auto max-w-sm rounded-md border bg-white px-12 py-10 shadow-md dark:border-gray-700 dark:bg-gray-700"
+    >
         <template v-if="!confirmingReset">
-            <h3 class="text-xl font-semibold mb-2 text-gray-700 dark:text-gray-200">Unlock your safe</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+            <h3
+                class="mb-2 text-xl font-semibold text-gray-700 dark:text-gray-200"
+            >
+                Unlock your safe
+            </h3>
+            <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">
                 <template v-if="isRecovery">
-                    Your safe could not be decrypted with your new password. Enter your
+                    Your safe could not be decrypted with your new password.
+                    Enter your
                     <strong>previous safe password</strong> to recover access.
                 </template>
                 <template v-else>
@@ -18,7 +25,10 @@
 
             <form @submit.prevent="handleSubmit">
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" for="safe_password">
+                    <label
+                        class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        for="safe_password"
+                    >
                         Safe password
                     </label>
                     <pwdsafe-input
@@ -30,7 +40,11 @@
                         autofocus
                     ></pwdsafe-input>
                 </div>
-                <pwdsafe-button type="submit" class="w-full" :disabled="submitting">
+                <pwdsafe-button
+                    type="submit"
+                    class="w-full"
+                    :disabled="submitting"
+                >
                     {{ submitting ? 'Unlocking…' : 'Unlock safe' }}
                 </pwdsafe-button>
             </form>
@@ -38,7 +52,7 @@
             <div class="mt-4 text-center">
                 <button
                     type="button"
-                    class="text-sm text-gray-500 dark:text-gray-400 hover:underline"
+                    class="text-sm text-gray-500 hover:underline dark:text-gray-400"
                     @click="confirmingReset = true"
                 >
                     Forgot safe password?
@@ -47,9 +61,14 @@
         </template>
 
         <template v-else>
-            <h3 class="text-xl font-semibold mb-2 text-gray-700 dark:text-gray-200">Reset your safe</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                This will permanently delete all your stored credentials and group memberships. You will need to set a new safe password.
+            <h3
+                class="mb-2 text-xl font-semibold text-gray-700 dark:text-gray-200"
+            >
+                Reset your safe
+            </h3>
+            <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">
+                This will permanently delete all your stored credentials and
+                group memberships. You will need to set a new safe password.
             </p>
 
             <pwdsafe-alert theme="danger" classes="mb-4">
@@ -61,10 +80,18 @@
             </pwdsafe-alert>
 
             <div class="flex gap-3">
-                <pwdsafe-button theme="danger" :disabled="resetting" @click="handleReset">
+                <pwdsafe-button
+                    theme="danger"
+                    :disabled="resetting"
+                    @click="handleReset"
+                >
                     {{ resetting ? 'Resetting…' : 'Reset safe' }}
                 </pwdsafe-button>
-                <pwdsafe-button theme="secondary" :disabled="resetting" @click="confirmingReset = false">
+                <pwdsafe-button
+                    theme="secondary"
+                    :disabled="resetting"
+                    @click="confirmingReset = false"
+                >
                     Cancel
                 </pwdsafe-button>
             </div>
@@ -73,7 +100,13 @@
 </template>
 
 <script>
-import { deriveVaultKey, decryptPrivkey, encryptPrivkey, storePrivkey, importVaultKey } from '../vault.js'
+import {
+    deriveVaultKey,
+    decryptPrivkey,
+    encryptPrivkey,
+    storePrivkey,
+    importVaultKey,
+} from '../vault.js'
 
 export default {
     name: 'VaultUnlock',
@@ -91,7 +124,9 @@ export default {
     },
 
     mounted() {
-        const pending = JSON.parse(sessionStorage.getItem('vault_pending') || '{}')
+        const pending = JSON.parse(
+            sessionStorage.getItem('vault_pending') || '{}',
+        )
         this.isRecovery = pending.recovery === true
     },
 
@@ -104,8 +139,17 @@ export default {
                 const appEl = document.getElementById('vault-unlock-app')
                 const csrfToken = appEl.dataset.csrf
 
-                const pending = JSON.parse(sessionStorage.getItem('vault_pending') || '{}')
-                let { encrypted_privkey, vault_key_hex, salt, password: rawPassword, new_vault_key_hex, recovery } = pending
+                const pending = JSON.parse(
+                    sessionStorage.getItem('vault_pending') || '{}',
+                )
+                let {
+                    encrypted_privkey,
+                    vault_key_hex,
+                    salt,
+                    password: rawPassword,
+                    new_vault_key_hex,
+                    recovery,
+                } = pending
 
                 // OIDC / headless login: sessionStorage not populated, fetch from API
                 if (!encrypted_privkey) {
@@ -113,7 +157,9 @@ export default {
                         headers: { Accept: 'application/json' },
                     })
                     if (!resp.ok) {
-                        throw new Error('Failed to load safe data. Please log in again.')
+                        throw new Error(
+                            'Failed to load safe data. Please log in again.',
+                        )
                     }
                     const keyData = await resp.json()
                     encrypted_privkey = keyData.encrypted_privkey
@@ -131,10 +177,15 @@ export default {
                 } else if (salt) {
                     vaultKey = await deriveVaultKey(this.safePassword, salt)
                 } else {
-                    throw new Error('No vault key material found. Please log in again.')
+                    throw new Error(
+                        'No vault key material found. Please log in again.',
+                    )
                 }
 
-                const privkeyPem = await decryptPrivkey(encrypted_privkey, vaultKey)
+                const privkeyPem = await decryptPrivkey(
+                    encrypted_privkey,
+                    vaultKey,
+                )
 
                 storePrivkey(privkeyPem)
                 sessionStorage.removeItem('vault_pending')
@@ -143,7 +194,10 @@ export default {
                     // Recovery after admin password reset: re-encrypt the private key with the
                     // new vault key (derived from the new login password) so future logins work.
                     const newVaultKey = await importVaultKey(new_vault_key_hex)
-                    const reEncryptedPrivkey = await encryptPrivkey(privkeyPem, newVaultKey)
+                    const reEncryptedPrivkey = await encryptPrivkey(
+                        privkeyPem,
+                        newVaultKey,
+                    )
 
                     const recoverResp = await fetch('/api/vault/recover', {
                         method: 'POST',
@@ -152,12 +206,18 @@ export default {
                             Accept: 'application/json',
                             'X-CSRF-TOKEN': csrfToken,
                         },
-                        body: JSON.stringify({ encrypted_privkey: reEncryptedPrivkey, salt }),
+                        body: JSON.stringify({
+                            encrypted_privkey: reEncryptedPrivkey,
+                            salt,
+                        }),
                     })
 
                     const recoverData = await recoverResp.json()
                     if (!recoverResp.ok) {
-                        throw new Error(recoverData.message || 'Failed to save recovered vault.')
+                        throw new Error(
+                            recoverData.message ||
+                                'Failed to save recovered vault.',
+                        )
                     }
 
                     window.location.href = recoverData.redirect

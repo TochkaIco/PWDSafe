@@ -1,4 +1,10 @@
-import { deriveVaultKey, deriveLoginHash, deriveLoginHashIndependent, encryptPrivkey, loadPrivkey } from './vault.js'
+import {
+    deriveVaultKey,
+    deriveLoginHash,
+    deriveLoginHashIndependent,
+    encryptPrivkey,
+    loadPrivkey,
+} from './vault.js'
 
 function addHidden(form, name, value) {
     const input = document.createElement('input')
@@ -33,7 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const oldpwdEl = loginForm.querySelector('[name=oldpwd]')
             const passwordEl = loginForm.querySelector('[name=password]')
-            const confirmEl = loginForm.querySelector('[name=password_confirmation]')
+            const confirmEl = loginForm.querySelector(
+                '[name=password_confirmation]',
+            )
 
             const oldPassword = oldpwdEl.value
             const newPassword = passwordEl.value
@@ -42,23 +50,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (isSeparate && loginSalt) {
                 // Already separate — derive both hashes from login_salt.
-                oldLoginHash = await deriveLoginHashIndependent(oldPassword, loginSalt)
+                oldLoginHash = await deriveLoginHashIndependent(
+                    oldPassword,
+                    loginSalt,
+                )
                 // New login hash will use a fresh login_salt generated server-side after verification.
                 // For now send oldLoginHash for verification and newLoginHash computed from same salt.
                 // The server will generate a new login_salt on store.
-                const newLoginSalt = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                const newLoginSalt = Array.from(
+                    crypto.getRandomValues(new Uint8Array(32)),
+                )
                     .map((b) => b.toString(16).padStart(2, '0'))
                     .join('')
-                newLoginHash = await deriveLoginHashIndependent(newPassword, newLoginSalt)
+                newLoginHash = await deriveLoginHashIndependent(
+                    newPassword,
+                    newLoginSalt,
+                )
                 addHidden(loginForm, 'new_login_salt', newLoginSalt)
             } else {
                 // Same password as vault — derive via vault path.
                 const oldVaultKey = await deriveVaultKey(oldPassword, vaultSalt)
                 oldLoginHash = await deriveLoginHash(oldVaultKey, oldPassword)
-                const newLoginSalt = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                const newLoginSalt = Array.from(
+                    crypto.getRandomValues(new Uint8Array(32)),
+                )
                     .map((b) => b.toString(16).padStart(2, '0'))
                     .join('')
-                newLoginHash = await deriveLoginHashIndependent(newPassword, newLoginSalt)
+                newLoginHash = await deriveLoginHashIndependent(
+                    newPassword,
+                    newLoginSalt,
+                )
                 addHidden(loginForm, 'new_login_salt', newLoginSalt)
             }
 
@@ -90,13 +111,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const oldpwdEl = vaultForm.querySelector('[name=oldpwd]')
         const passwordEl = vaultForm.querySelector('[name=password]')
-        const confirmEl = vaultForm.querySelector('[name=password_confirmation]')
+        const confirmEl = vaultForm.querySelector(
+            '[name=password_confirmation]',
+        )
 
         const oldPassword = oldpwdEl.value
         const newPassword = passwordEl.value
         const currentVaultSalt = vaultForm.dataset.vaultSalt
 
-        const newVaultSalt = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+        const newVaultSalt = Array.from(
+            crypto.getRandomValues(new Uint8Array(32)),
+        )
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
         const newVaultKey = await deriveVaultKey(newPassword, newVaultSalt)
@@ -104,8 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isSeparateVault) {
             // Flow B: already separate — server verifies by decrypting current privkey with vault_key_hex.
-            const oldVaultKey = await deriveVaultKey(oldPassword, currentVaultSalt)
-            const oldVaultKeyBytes = await crypto.subtle.exportKey('raw', oldVaultKey)
+            const oldVaultKey = await deriveVaultKey(
+                oldPassword,
+                currentVaultSalt,
+            )
+            const oldVaultKeyBytes = await crypto.subtle.exportKey(
+                'raw',
+                oldVaultKey,
+            )
             const oldVaultKeyHex = Array.from(new Uint8Array(oldVaultKeyBytes))
                 .map((b) => b.toString(16).padStart(2, '0'))
                 .join('')
@@ -117,14 +148,22 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // Flow A: first separation — verify via current login hash (login_pwd = old safe pwd).
             // Also set up independent login_salt so login and vault are fully decoupled.
-            const oldVaultKey = await deriveVaultKey(oldPassword, currentVaultSalt)
+            const oldVaultKey = await deriveVaultKey(
+                oldPassword,
+                currentVaultSalt,
+            )
             const oldLoginHash = await deriveLoginHash(oldVaultKey, oldPassword)
 
-            const newLoginSalt = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+            const newLoginSalt = Array.from(
+                crypto.getRandomValues(new Uint8Array(32)),
+            )
                 .map((b) => b.toString(16).padStart(2, '0'))
                 .join('')
             // Login password stays the same as old safe password (login_pwd = old_safe_pwd before separation).
-            const newLoginHash = await deriveLoginHashIndependent(oldPassword, newLoginSalt)
+            const newLoginHash = await deriveLoginHashIndependent(
+                oldPassword,
+                newLoginSalt,
+            )
 
             oldpwdEl.value = oldLoginHash
             passwordEl.value = newLoginHash

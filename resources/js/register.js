@@ -1,5 +1,10 @@
 import forge from 'node-forge'
-import { deriveVaultKey, deriveLoginHash, encryptPrivkey, storePrivkey } from './vault.js'
+import {
+    deriveVaultKey,
+    deriveLoginHash,
+    encryptPrivkey,
+    storePrivkey,
+} from './vault.js'
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('form[data-register]')
@@ -16,7 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const setLoading = (loading, submitBtn) => {
         if (submitBtn) submitBtn.disabled = loading
         if (spinner) spinner.classList.toggle('hidden', !loading)
-        if (submitText) submitText.textContent = loading ? 'Registering…' : 'Register'
+        if (submitText)
+            submitText.textContent = loading ? 'Registering…' : 'Register'
     }
 
     form.addEventListener('submit', async (e) => {
@@ -24,10 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const email = form.querySelector('[name=email]').value
         const password = form.querySelector('[name=password]').value
-        const confirmation = form.querySelector('[name=password_confirmation]').value
+        const confirmation = form.querySelector(
+            '[name=password_confirmation]',
+        ).value
 
         const setPasswordError = (hasError) => {
-            for (const input of form.querySelectorAll('input[name=password], input[name=password_confirmation]')) {
+            for (const input of form.querySelectorAll(
+                'input[name=password], input[name=password_confirmation]',
+            )) {
                 input.style.borderColor = hasError ? 'rgb(239, 68, 68)' : ''
             }
         }
@@ -52,10 +62,13 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Generate RSA 4096 key pair in the browser — server never sees the private key.
             const keypair = await new Promise((resolve, reject) => {
-                forge.pki.rsa.generateKeyPair({ bits: 4096, workers: -1 }, (err, kp) => {
-                    if (err) reject(err)
-                    else resolve(kp)
-                })
+                forge.pki.rsa.generateKeyPair(
+                    { bits: 4096, workers: -1 },
+                    (err, kp) => {
+                        if (err) reject(err)
+                        else resolve(kp)
+                    },
+                )
             })
             const privkeyPem = forge.pki.privateKeyToPem(keypair.privateKey)
             const pubkeyPem = forge.pki.publicKeyToPem(keypair.publicKey)

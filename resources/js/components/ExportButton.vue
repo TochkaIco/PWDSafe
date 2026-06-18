@@ -1,6 +1,13 @@
 <template>
-    <pwdsafe-button theme="secondary" classes="flex items-center" @click="handleExport" :disabled="exporting">
-        <heroicons-arrow-down-on-square-icon class="mr-1 h-5 w-5"></heroicons-arrow-down-on-square-icon>
+    <pwdsafe-button
+        theme="secondary"
+        classes="flex items-center"
+        @click="handleExport"
+        :disabled="exporting"
+    >
+        <heroicons-arrow-down-on-square-icon
+            class="mr-1 h-5 w-5"
+        ></heroicons-arrow-down-on-square-icon>
         Export
     </pwdsafe-button>
 </template>
@@ -25,14 +32,18 @@ const handleExport = async () => {
     exporting.value = true
     try {
         const privkeyPem = loadPrivkey()
-        const { data: credentials } = await axios.get(`/api/groups/${props.groupid}/export-data`)
+        const { data: credentials } = await axios.get(
+            `/api/groups/${props.groupid}/export-data`,
+        )
 
         const rows = await Promise.all(
             credentials.map(async (cred) => ({
                 name: cred.name,
                 url: cred.url,
                 username: cred.username,
-                password: privkeyPem ? await decryptCredential(cred.data, privkeyPem) : cred.data,
+                password: privkeyPem
+                    ? await decryptCredential(cred.data, privkeyPem)
+                    : cred.data,
                 notes: cred.notes,
             })),
         )
@@ -44,7 +55,9 @@ const handleExport = async () => {
             .slice(0, 200)
 
         const filename = `pwdsafe_export_${sanitized}_${new Date().toISOString().slice(0, 10)}.json`
-        const blob = new Blob([JSON.stringify(rows)], { type: 'application/json' })
+        const blob = new Blob([JSON.stringify(rows)], {
+            type: 'application/json',
+        })
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url

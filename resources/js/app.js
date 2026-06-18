@@ -66,7 +66,10 @@ app.component('heroicons-folder-open-icon', FolderOpenIcon)
 app.component('heroicons-folder-plus-icon', FolderPlusIcon)
 app.component('heroicons-pencil-square-icon', PencilSquareIcon)
 app.component('heroicons-ellipsis-horizontal-icon', EllipsisHorizontalIcon)
-app.component('heroicons-clipboard-document-list-icon', ClipboardDocumentListIcon)
+app.component(
+    'heroicons-clipboard-document-list-icon',
+    ClipboardDocumentListIcon,
+)
 app.component('heroicons-lock-closed-icon', LockClosedIcon)
 
 import PwdsafeButton from './components/Button.vue'

@@ -1,6 +1,9 @@
 <template>
-    <div class="py-4 px-2 flex flex-col h-full">
-        <div v-if="loading" class="px-3 py-2 text-sm text-gray-400 dark:text-gray-500">
+    <div class="flex h-full flex-col px-2 py-4">
+        <div
+            v-if="loading"
+            class="px-3 py-2 text-sm text-gray-400 dark:text-gray-500"
+        >
             Loading…
         </div>
 
@@ -11,40 +14,49 @@
         <template v-else>
             <!-- Private section -->
             <div class="mb-4">
-                <div class="flex items-center justify-between px-3 mb-1">
+                <div class="mb-1 flex items-center justify-between px-3">
                     <a
                         v-if="privateGroup"
                         :href="privateGroup.url"
-                        class="flex items-center gap-x-1.5 text-xs font-semibold uppercase tracking-wider transition duration-150 rounded px-1 -mx-1"
+                        class="-mx-1 flex items-center gap-x-1.5 rounded px-1 text-xs font-semibold tracking-wider uppercase transition duration-150"
                         :class="[
                             activeGroupId === privateGroup.id
                                 ? 'text-indigo-600 dark:text-indigo-400'
-                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300',
-                            privateRootDragOver ? 'ring-2 ring-indigo-500 text-indigo-600 dark:text-indigo-400' : '',
+                                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300',
+                            privateRootDragOver
+                                ? 'text-indigo-600 ring-2 ring-indigo-500 dark:text-indigo-400'
+                                : '',
                         ]"
                         @dragover.prevent
                         @dragenter="privateRootOnDragEnter"
                         @dragleave="privateRootOnDragLeave"
                         @drop.prevent="privateRootOnDrop"
                     >
-                        <heroicons-lock-closed-icon class="w-3.5 h-3.5 flex-shrink-0" />
+                        <heroicons-lock-closed-icon
+                            class="h-3.5 w-3.5 flex-shrink-0"
+                        />
                         Private
                     </a>
-                    <span v-else class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                    <span
+                        v-else
+                        class="text-xs font-semibold tracking-wider text-gray-400 uppercase dark:text-gray-500"
+                    >
                         Private
                     </span>
                     <a
                         v-if="privateGroup"
-                        :href="'/groups/' + privateGroup.id + '/subgroups/create'"
-                        class="text-gray-400 dark:text-gray-500 hover:text-indigo-500 dark:hover:text-indigo-400 transition duration-150"
+                        :href="
+                            '/groups/' + privateGroup.id + '/subgroups/create'
+                        "
+                        class="text-gray-400 transition duration-150 hover:text-indigo-500 dark:text-gray-500 dark:hover:text-indigo-400"
                         title="New sub-group"
                     >
-                        <heroicons-folder-plus-icon class="w-4 h-4" />
+                        <heroicons-folder-plus-icon class="h-4 w-4" />
                     </a>
                 </div>
                 <!-- Children render directly under the label; no tree item for the private root -->
                 <vault-sidebar-item
-                    v-for="child in (privateGroup?.children ?? [])"
+                    v-for="child in privateGroup?.children ?? []"
                     :key="child.id"
                     :node="child"
                     :active-group-id="activeGroupId"
@@ -53,19 +65,24 @@
 
             <!-- Shared section -->
             <div>
-                <div class="flex items-center justify-between px-3 mb-1">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                <div class="mb-1 flex items-center justify-between px-3">
+                    <span
+                        class="text-xs font-semibold tracking-wider text-gray-400 uppercase dark:text-gray-500"
+                    >
                         Shared
                     </span>
                     <a
                         href="/groups/create"
-                        class="text-gray-400 dark:text-gray-500 hover:text-indigo-500 dark:hover:text-indigo-400 transition duration-150"
+                        class="text-gray-400 transition duration-150 hover:text-indigo-500 dark:text-gray-500 dark:hover:text-indigo-400"
                         title="New group"
                     >
-                        <heroicons-folder-plus-icon class="w-4 h-4" />
+                        <heroicons-folder-plus-icon class="h-4 w-4" />
                     </a>
                 </div>
-                <p v-if="sharedGroups.length === 0" class="px-3 text-xs text-gray-400 dark:text-gray-500 italic">
+                <p
+                    v-if="sharedGroups.length === 0"
+                    class="px-3 text-xs text-gray-400 italic dark:text-gray-500"
+                >
                     No shared groups yet.
                 </p>
                 <vault-sidebar-item
@@ -77,12 +94,14 @@
             </div>
 
             <!-- Bottom links -->
-            <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-600">
+            <div
+                class="mt-auto border-t border-gray-200 pt-4 dark:border-gray-600"
+            >
                 <a
                     href="/securitycheck"
-                    class="flex items-center gap-x-2 px-3 py-1.5 rounded-md text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 transition duration-150"
+                    class="flex items-center gap-x-2 rounded-md px-3 py-1.5 text-sm text-gray-600 transition duration-150 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600"
                 >
-                    <ShieldCheckIcon class="w-4 h-4 flex-shrink-0" />
+                    <ShieldCheckIcon class="h-4 w-4 flex-shrink-0" />
                     Security check
                 </a>
             </div>
@@ -118,7 +137,9 @@ const loadSidebar = async () => {
         const response = await fetch('/api/sidebar', {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
         })
-        if (!response.ok) { throw new Error('Failed to load sidebar') }
+        if (!response.ok) {
+            throw new Error('Failed to load sidebar')
+        }
         const data = await response.json()
         privateGroup.value = data.private
         sharedGroups.value = data.shared

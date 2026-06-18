@@ -14,12 +14,21 @@ export async function deriveVaultKey(password, saltHex) {
     const enc = new TextEncoder()
     const salt = hexToBytes(saltHex)
 
-    const baseKey = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, [
-        'deriveKey',
-    ])
+    const baseKey = await crypto.subtle.importKey(
+        'raw',
+        enc.encode(password),
+        'PBKDF2',
+        false,
+        ['deriveKey'],
+    )
 
     return crypto.subtle.deriveKey(
-        { name: 'PBKDF2', salt, iterations: PBKDF2_ITERATIONS, hash: PBKDF2_HASH },
+        {
+            name: 'PBKDF2',
+            salt,
+            iterations: PBKDF2_ITERATIONS,
+            hash: PBKDF2_HASH,
+        },
         baseKey,
         { name: 'AES-GCM', length: KEY_LENGTH },
         true, // extractable so deriveLoginHash can export the raw bytes as PBKDF2 input
@@ -40,9 +49,20 @@ export async function deriveVaultKey(password, saltHex) {
  */
 export async function deriveLoginHash(vaultKey, password) {
     const exported = await crypto.subtle.exportKey('raw', vaultKey)
-    const baseKey = await crypto.subtle.importKey('raw', exported, 'PBKDF2', false, ['deriveBits'])
+    const baseKey = await crypto.subtle.importKey(
+        'raw',
+        exported,
+        'PBKDF2',
+        false,
+        ['deriveBits'],
+    )
     const bits = await crypto.subtle.deriveBits(
-        { name: 'PBKDF2', salt: new TextEncoder().encode(password), iterations: 1, hash: 'SHA-256' },
+        {
+            name: 'PBKDF2',
+            salt: new TextEncoder().encode(password),
+            iterations: 1,
+            hash: 'SHA-256',
+        },
         baseKey,
         256,
     )
@@ -64,12 +84,21 @@ export async function deriveLoginHashIndependent(loginPassword, loginSaltHex) {
     const enc = new TextEncoder()
     const salt = hexToBytes(loginSaltHex)
 
-    const baseKey = await crypto.subtle.importKey('raw', enc.encode(loginPassword), 'PBKDF2', false, [
-        'deriveBits',
-    ])
+    const baseKey = await crypto.subtle.importKey(
+        'raw',
+        enc.encode(loginPassword),
+        'PBKDF2',
+        false,
+        ['deriveBits'],
+    )
 
     const bits = await crypto.subtle.deriveBits(
-        { name: 'PBKDF2', salt, iterations: PBKDF2_ITERATIONS, hash: PBKDF2_HASH },
+        {
+            name: 'PBKDF2',
+            salt,
+            iterations: PBKDF2_ITERATIONS,
+            hash: PBKDF2_HASH,
+        },
         baseKey,
         256,
     )
@@ -86,8 +115,13 @@ export async function deriveLoginHashIndependent(loginPassword, loginSaltHex) {
  * @returns {Promise<CryptoKey>}
  */
 export async function importVaultKey(hexKey) {
-    const bytes = new Uint8Array(hexKey.match(/.{2}/g).map((b) => parseInt(b, 16)))
-    return crypto.subtle.importKey('raw', bytes, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt'])
+    const bytes = new Uint8Array(
+        hexKey.match(/.{2}/g).map((b) => parseInt(b, 16)),
+    )
+    return crypto.subtle.importKey('raw', bytes, { name: 'AES-GCM' }, false, [
+        'encrypt',
+        'decrypt',
+    ])
 }
 
 /**
@@ -104,7 +138,11 @@ export async function decryptPrivkey(encryptedB64, vaultKey) {
     const ciphertextWithTag = raw.slice(12) // Web Crypto expects tag appended to ciphertext
 
     try {
-        const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, vaultKey, ciphertextWithTag)
+        const decrypted = await crypto.subtle.decrypt(
+            { name: 'AES-GCM', iv },
+            vaultKey,
+            ciphertextWithTag,
+        )
         return new TextDecoder().decode(decrypted)
     } catch {
         throw new Error('Could not decrypt vault. Incorrect password?')
@@ -122,7 +160,11 @@ export async function decryptPrivkey(encryptedB64, vaultKey) {
 export async function encryptPrivkey(privkeyPem, vaultKey) {
     const iv = crypto.getRandomValues(new Uint8Array(12))
     const enc = new TextEncoder()
-    const ciphertextWithTag = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, vaultKey, enc.encode(privkeyPem))
+    const ciphertextWithTag = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv },
+        vaultKey,
+        enc.encode(privkeyPem),
+    )
 
     const result = new Uint8Array(12 + ciphertextWithTag.byteLength)
     result.set(iv, 0)
@@ -153,9 +195,19 @@ export async function decryptLegacyPrivkey(encrypted, password) {
     const keyBytes = new Uint8Array(32)
     keyBytes.set(passwordBytes.slice(0, 32))
 
-    const key = await crypto.subtle.importKey('raw', keyBytes, { name: 'AES-CBC' }, false, ['decrypt'])
+    const key = await crypto.subtle.importKey(
+        'raw',
+        keyBytes,
+        { name: 'AES-CBC' },
+        false,
+        ['decrypt'],
+    )
 
-    const decrypted = await crypto.subtle.decrypt({ name: 'AES-CBC', iv }, key, ciphertext)
+    const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-CBC', iv },
+        key,
+        ciphertext,
+    )
 
     return new TextDecoder().decode(decrypted)
 }
@@ -184,7 +236,11 @@ export function clearPrivkey() {
  * @returns {Promise<string>}
  */
 export async function encryptCredentialV2(plaintext, pubkeyPem) {
-    const aesKey = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, ['encrypt'])
+    const aesKey = await crypto.subtle.generateKey(
+        { name: 'AES-GCM', length: 256 },
+        true,
+        ['encrypt'],
+    )
     const rawAesKey = await crypto.subtle.exportKey('raw', aesKey)
 
     const iv = crypto.getRandomValues(new Uint8Array(12))
@@ -221,16 +277,30 @@ export async function decryptCredentialV2(ciphertext, privkeyPem) {
     const encryptedAesKeyB64 = parts[2]
 
     const privateKey = forge.pki.privateKeyFromPem(privkeyPem)
-    const rawAesKey = privateKey.decrypt(forge.util.decode64(encryptedAesKeyB64), 'RSA-OAEP', {
-        md: forge.md.sha256.create(),
-        mgf1: { md: forge.md.sha256.create() },
-    })
+    const rawAesKey = privateKey.decrypt(
+        forge.util.decode64(encryptedAesKeyB64),
+        'RSA-OAEP',
+        {
+            md: forge.md.sha256.create(),
+            mgf1: { md: forge.md.sha256.create() },
+        },
+    )
 
     const aesKeyBytes = Uint8Array.from(rawAesKey, (c) => c.charCodeAt(0))
-    const aesKey = await crypto.subtle.importKey('raw', aesKeyBytes, { name: 'AES-GCM' }, false, ['decrypt'])
+    const aesKey = await crypto.subtle.importKey(
+        'raw',
+        aesKeyBytes,
+        { name: 'AES-GCM' },
+        false,
+        ['decrypt'],
+    )
 
     const aesData = base64ToBytes(aesDataB64)
-    const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: aesData.slice(0, 12) }, aesKey, aesData.slice(12))
+    const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: aesData.slice(0, 12) },
+        aesKey,
+        aesData.slice(12),
+    )
 
     return new TextDecoder().decode(decrypted)
 }
@@ -253,10 +323,18 @@ export async function decryptCredential(encryptedData, privkeyPem) {
         return encryptedData
             .split('-')
             .filter((chunk) => chunk.length > 0)
-            .map((chunk) => privateKey.decrypt(forge.util.decode64(chunk), 'RSAES-PKCS1-V1_5'))
+            .map((chunk) =>
+                privateKey.decrypt(
+                    forge.util.decode64(chunk),
+                    'RSAES-PKCS1-V1_5',
+                ),
+            )
             .join('')
     }
-    return privateKey.decrypt(forge.util.decode64(encryptedData), 'RSAES-PKCS1-V1_5')
+    return privateKey.decrypt(
+        forge.util.decode64(encryptedData),
+        'RSAES-PKCS1-V1_5',
+    )
 }
 
 /**
@@ -274,8 +352,18 @@ export async function encryptWithToken(plaintext, token) {
     keyBytes.set(tokenBytes.slice(0, 32))
 
     const iv = crypto.getRandomValues(new Uint8Array(16))
-    const key = await crypto.subtle.importKey('raw', keyBytes, 'AES-CBC', false, ['encrypt'])
-    const encrypted = await crypto.subtle.encrypt({ name: 'AES-CBC', iv }, key, new TextEncoder().encode(plaintext))
+    const key = await crypto.subtle.importKey(
+        'raw',
+        keyBytes,
+        'AES-CBC',
+        false,
+        ['encrypt'],
+    )
+    const encrypted = await crypto.subtle.encrypt(
+        { name: 'AES-CBC', iv },
+        key,
+        new TextEncoder().encode(plaintext),
+    )
 
     const hexIv = Array.from(iv)
         .map((b) => b.toString(16).padStart(2, '0'))

@@ -85,7 +85,8 @@
                                 ]"
                                 :disabled="exporting"
                                 @click="triggerExport"
-                            ><heroicons-arrow-up-tray-icon
+                            >
+                                <heroicons-arrow-up-tray-icon
                                     class="mr-1 h-5 w-5"
                                 />
                                 {{

@@ -1,4 +1,9 @@
-import { deriveVaultKey, importVaultKey, decryptPrivkey, storePrivkey } from './vault.js'
+import {
+    deriveVaultKey,
+    importVaultKey,
+    decryptPrivkey,
+    storePrivkey,
+} from './vault.js'
 
 document.addEventListener('DOMContentLoaded', async () => {
     const pending = sessionStorage.getItem('vault_pending')
@@ -8,7 +13,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (submitBtn) submitBtn.disabled = true
 
     try {
-        const { encrypted_privkey, vault_key_hex, salt, password } = JSON.parse(pending)
+        const { encrypted_privkey, vault_key_hex, salt, password } =
+            JSON.parse(pending)
 
         // Remove immediately so the key is not kept in sessionStorage longer than needed.
         sessionStorage.removeItem('vault_pending')

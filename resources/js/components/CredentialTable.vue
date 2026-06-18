@@ -3,19 +3,25 @@
         <table v-if="localCredentials.length > 0" class="min-w-full">
             <thead>
                 <tr class="border-b border-gray-200 dark:border-gray-600">
-                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    <th
+                        class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400"
+                    >
                         Name
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    <th
+                        class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400"
+                    >
                         Username
                     </th>
                     <th
                         v-if="showGroupName"
-                        class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                        class="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400"
                     >
                         Group
                     </th>
-                    <th class="w-px px-4 py-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    <th
+                        class="w-px px-4 py-3 text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400"
+                    >
                         Actions
                     </th>
                 </tr>
@@ -26,10 +32,12 @@
                     :key="credential.id"
                     draggable="true"
                     @dragstart="onDragStart(credential, $event)"
-                    class="border-b border-gray-100 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition duration-100 cursor-pointer"
+                    class="cursor-pointer border-b border-gray-100 transition duration-100 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-600"
                     @click="editForRow(index)"
                 >
-                    <td class="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <td
+                        class="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100"
+                    >
                         {{ credential.name }}
                         <div v-if="credential.url" class="text-xs font-normal">
                             <a
@@ -38,14 +46,23 @@
                                 rel="noopener noreferrer"
                                 class="text-gray-500 hover:text-indigo-500 hover:underline dark:text-gray-400 dark:hover:text-indigo-300"
                                 @click.stop
-                            >{{ credential.url }}</a>
+                                >{{ credential.url }}</a
+                            >
                         </div>
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                    <td
+                        class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400"
+                    >
                         {{ credential.username }}
                     </td>
-                    <td v-if="showGroupName" class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                        {{ credential.display_group_name ?? credential.group?.name }}
+                    <td
+                        v-if="showGroupName"
+                        class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400"
+                    >
+                        {{
+                            credential.display_group_name ??
+                            credential.group?.name
+                        }}
                     </td>
                     <td class="w-px px-4 py-3" @click.stop>
                         <div class="flex items-center gap-x-1">
@@ -54,7 +71,9 @@
                                 title="Copy password"
                                 @click="copyForRow(index)"
                             >
-                                <heroicons-clipboard-document-list-icon class="h-5 w-5" />
+                                <heroicons-clipboard-document-list-icon
+                                    class="h-5 w-5"
+                                />
                             </pwdsafe-button>
                             <pwdsafe-button
                                 theme="secondary"
@@ -70,7 +89,10 @@
             </tbody>
         </table>
 
-        <div v-else class="py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+        <div
+            v-else
+            class="py-8 text-center text-sm text-gray-500 dark:text-gray-400"
+        >
             No credentials yet. Use the menu above to add one.
         </div>
 
@@ -78,7 +100,11 @@
         <credential-card
             v-for="(credential, index) in localCredentials"
             :key="'cc-modal-' + credential.id"
-            :ref="(el) => { if (el) credCardRefs[index] = el }"
+            :ref="
+                (el) => {
+                    if (el) credCardRefs[index] = el
+                }
+            "
             :credential="credential"
             :groups="groups"
             :can-update="canUpdate"
@@ -108,7 +134,9 @@ const localCredentials = ref([...props.credentials])
 const credCardRefs = ref<any[]>([])
 
 const refresh = async () => {
-    if (!props.groupId) { return }
+    if (!props.groupId) {
+        return
+    }
     credCardRefs.value = []
     const { data } = await axios.get(`/api/groups/${props.groupId}/credentials`)
     localCredentials.value = data
@@ -129,13 +157,16 @@ const copyForRow = (index: number) => {
 
 const onDragStart = (credential: any, event: DragEvent) => {
     event.dataTransfer!.effectAllowed = 'move'
-    event.dataTransfer!.setData('application/json', JSON.stringify({
-        credentialId: credential.id,
-        sourceGroupId: credential.groupid,
-        name: credential.name,
-        url: credential.url,
-        username: credential.username,
-        notes: credential.notes ?? '',
-    }))
+    event.dataTransfer!.setData(
+        'application/json',
+        JSON.stringify({
+            credentialId: credential.id,
+            sourceGroupId: credential.groupid,
+            name: credential.name,
+            url: credential.url,
+            username: credential.username,
+            notes: credential.notes ?? '',
+        }),
+    )
 }
 </script>
