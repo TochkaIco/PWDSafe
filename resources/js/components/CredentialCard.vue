@@ -52,7 +52,7 @@
                         >
                             <input type="hidden" name="_method" value="put" />
                             <div class="mb-2">
-                                <pwdsafe-label for="name" class="mb-1"
+                                <pwdsafe-label for="name" class="mb-1" required
                                     >Name</pwdsafe-label
                                 >
                                 <pwdsafe-input
@@ -84,7 +84,7 @@
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <pwdsafe-label for="username" class="mb-1"
+                                <pwdsafe-label for="username" class="mb-1" required
                                     >Username</pwdsafe-label
                                 >
                                 <pwdsafe-input
@@ -95,7 +95,7 @@
                             </div>
                             <div class="mb-2">
                                 <div class="mb-2 flex items-end justify-between">
-                                    <pwdsafe-label for="password" class="mb-1">
+                                    <pwdsafe-label for="password" class="mb-1" required>
                                         Password
                                     </pwdsafe-label>
                                     <pwdsafe-passwordgen
