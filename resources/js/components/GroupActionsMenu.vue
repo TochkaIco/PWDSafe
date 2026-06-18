@@ -27,10 +27,14 @@
                     <div v-if="canCreateSubGroup" class="py-1">
                         <MenuItem v-slot="{ active }">
                             <a
-                                :href="'/groups/' + groupid + '/subgroups/create'"
+                                :href="
+                                    '/groups/' + groupid + '/subgroups/create'
+                                "
                                 :class="menuItemClass(active)"
                             >
-                                New sub-group
+                                <heroicons-folder-plus-icon
+                                    class="mr-1 h-5 w-5"
+                                />New sub-group
                             </a>
                         </MenuItem>
                     </div>
@@ -41,15 +45,16 @@
                             <a
                                 :href="'/groups/' + groupid + '/name'"
                                 :class="menuItemClass(active)"
-                            >
-                                Change name
+                                ><heroicons-pencil-square-icon
+                                    class="mr-1 h-5 w-5"
+                                />Change name
                             </a>
                         </MenuItem>
                         <MenuItem v-if="canManageMembers" v-slot="{ active }">
                             <a
                                 :href="'/groups/' + groupid + '/members'"
                                 :class="menuItemClass(active)"
-                            >
+                                ><heroicons-users-icon class="mr-1 h-5 w-5" />
                                 Manage members
                             </a>
                         </MenuItem>
@@ -63,17 +68,31 @@
                                 :class="menuItemClass(active)"
                                 @click="triggerImport"
                             >
+                                <heroicons-arrow-down-tray-icon
+                                    class="mr-1 h-5 w-5"
+                                />
                                 Import credentials
                             </button>
                         </MenuItem>
                         <MenuItem v-slot="{ active }">
                             <button
                                 type="button"
-                                :class="[menuItemClass(active), exporting ? 'opacity-50 cursor-not-allowed' : '']"
+                                :class="[
+                                    menuItemClass(active),
+                                    exporting
+                                        ? 'cursor-not-allowed opacity-50'
+                                        : '',
+                                ]"
                                 :disabled="exporting"
                                 @click="triggerExport"
-                            >
-                                {{ exporting ? 'Exporting…' : 'Export credentials' }}
+                            ><heroicons-arrow-up-tray-icon
+                                    class="mr-1 h-5 w-5"
+                                />
+                                {{
+                                    exporting
+                                        ? 'Exporting…'
+                                        : 'Export credentials'
+                                }}
                             </button>
                         </MenuItem>
                     </div>
@@ -83,9 +102,14 @@
                         <MenuItem v-slot="{ active }">
                             <a
                                 :href="'/groups/' + groupid + '/delete'"
-                                :class="[menuItemClass(active), 'text-red-600 dark:text-red-400']"
+                                :class="[
+                                    menuItemClass(active),
+                                    'text-red-600 dark:text-red-400',
+                                ]"
                             >
-                                <heroicons-trash-icon class="h-4 w-4 inline mr-1" />
+                                <heroicons-trash-icon
+                                    class="mr-1 inline h-4 w-4"
+                                />
                                 Delete group
                             </a>
                         </MenuItem>
@@ -141,7 +165,9 @@ const triggerImport = () => {
 
 const menuItemClass = (active: boolean) =>
     [
-        active ? 'bg-gray-100 dark:bg-gray-700 dark:text-white' : 'dark:bg-gray-600',
+        active
+            ? 'bg-gray-100 dark:bg-gray-700 dark:text-white'
+            : 'dark:bg-gray-600',
         'group flex w-full items-center px-4 py-2 text-sm text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200 dark:focus:bg-gray-700',
     ].join(' ')
 
@@ -149,14 +175,18 @@ const triggerExport = async () => {
     exporting.value = true
     try {
         const privkeyPem = loadPrivkey()
-        const { data: credentials } = await axios.get(`/api/groups/${props.groupid}/export-data`)
+        const { data: credentials } = await axios.get(
+            `/api/groups/${props.groupid}/export-data`,
+        )
 
         const rows = await Promise.all(
             credentials.map(async (cred: any) => ({
                 name: cred.name,
                 url: cred.url,
                 username: cred.username,
-                password: privkeyPem ? await decryptCredential(cred.data, privkeyPem) : cred.data,
+                password: privkeyPem
+                    ? await decryptCredential(cred.data, privkeyPem)
+                    : cred.data,
                 notes: cred.notes,
             })),
         )
@@ -168,7 +198,9 @@ const triggerExport = async () => {
             .slice(0, 200)
 
         const filename = `pwdsafe_export_${sanitized}_${new Date().toISOString().slice(0, 10)}.json`
-        const blob = new Blob([JSON.stringify(rows)], { type: 'application/json' })
+        const blob = new Blob([JSON.stringify(rows)], {
+            type: 'application/json',
+        })
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url

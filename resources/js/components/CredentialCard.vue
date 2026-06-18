@@ -221,7 +221,12 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
-import { EyeIcon, EyeSlashIcon, ClipboardDocumentListIcon, ArrowTopRightOnSquareIcon } from '@heroicons/vue/24/outline'
+import {
+    EyeIcon,
+    EyeSlashIcon,
+    ClipboardDocumentListIcon,
+    ArrowTopRightOnSquareIcon,
+} from '@heroicons/vue/24/outline'
 import ShareModal from './ShareModal.vue'
 import { decryptCredential, encryptCredentialV2 } from '../vault.js'
 import { showToast } from '../composables/useToast.js'
@@ -301,7 +306,9 @@ defineExpose({
 const saveCredentials = async function () {
     const groupId = credentialint.groupid
 
-    const { data: pubkeysData } = await axios.get(`/api/groups/${groupId}/pubkeys`)
+    const { data: pubkeysData } = await axios.get(
+        `/api/groups/${groupId}/pubkeys`,
+    )
     const encrypted = await Promise.all(
         pubkeysData.users.map(async ({ id, pubkey }) => ({
             userid: id,

@@ -13,7 +13,7 @@ class SidebarController extends Controller
 
         $groups = $user->groups()
             ->select('groups.id', 'groups.name', 'groups.parent_id')
-            ->withCount('credentials')
+            ->withCount(['credentials', 'users'])
             ->get();
 
         $byParent = $groups->groupBy('parent_id');
@@ -30,6 +30,7 @@ class SidebarController extends Controller
                 'name' => $group->name,
                 'url' => route('group', $group->id),
                 'credentialsCount' => $group->credentials_count,
+                'usersCount' => $group->users_count,
                 'children' => $children,
             ];
         };

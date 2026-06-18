@@ -32,7 +32,7 @@
                     <input type="checkbox" v-model="burnAfterRead" /> Burn after
                     read
                 </label>
-                <p class="text-sm italic">
+                <p class="text-sm italic text-red-500">
                     This allows anyone with the link to look at the data only
                     once.
                 </p>
