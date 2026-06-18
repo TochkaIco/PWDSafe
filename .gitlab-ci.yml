@@ -46,38 +46,33 @@ test:
         coverage_format: cobertura
         path: cobertura-report.xml
 
-security-check-composer:
+.analysis:
   image: $BUILDIMAGE
   stage: analysis
   needs:
     - composer
+
+security-check-composer:
+  extends: .analysis
   variables:
     GIT_DEPTH: 1
   script:
     - COMPOSER_AUDIT_ABANDONED=ignore composer audit
 
 static analysis:
-  image: $BUILDIMAGE
-  stage: analysis
-  needs:
-    - composer
+  extends: .analysis
   script:
     - ./vendor/bin/phpstan analyse
 
 code style:
-  image: $BUILDIMAGE
-  stage: analysis
-  needs:
-    - composer
+  extends: .analysis
   script:
     - ./vendor/bin/pint --test
     - npm run lint
 
-build docker:
+.docker:
   image: docker:29.0
   stage: docker
-  needs:
-    - test
   cache: []
   services:
     - name: docker:29.0-dind
@@ -87,32 +82,44 @@ build docker:
     DOCKER_HOST: "tcp://docker:2375"
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ''
-  script:
+  before_script:
     - if [ "$CI_COMMIT_REF_NAME" = "master" ]; then TAGNAME="latest"; else TAGNAME="$CI_COMMIT_REF_NAME-latest"; fi
     - if [ $CI_COMMIT_TAG ]; then TAGNAME=$CI_COMMIT_TAG ; fi
     - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
-    - docker build -f Dockerfile -t $CI_REGISTRY_IMAGE:$TAGNAME .
-    - docker push $CI_REGISTRY_IMAGE:$TAGNAME
 
-deploy docker:
-  image: docker:29.0
-  stage: deploy
+build docker:
+  extends: .docker
+  needs:
+    - test
+  script:
+    - docker build -f Dockerfile -t $CI_REGISTRY_IMAGE:$TAGNAME-amd64 .
+    - docker push $CI_REGISTRY_IMAGE:$TAGNAME-amd64
+
+build docker arm:
+  extends: .docker
+  tags:
+    - arm
+  needs:
+    - test
+  script:
+    - docker build -f Dockerfile -t $CI_REGISTRY_IMAGE:$TAGNAME-arm64 .
+    - docker push $CI_REGISTRY_IMAGE:$TAGNAME-arm64
+
+manifest docker:
+  extends: .docker
   needs:
     - build docker
+    - build docker arm
+  script:
+    - docker buildx imagetools create -t $CI_REGISTRY_IMAGE:$TAGNAME $CI_REGISTRY_IMAGE:$TAGNAME-amd64 $CI_REGISTRY_IMAGE:$TAGNAME-arm64
+
+deploy docker:
+  extends: .docker
+  stage: deploy
+  needs:
+    - manifest docker
   only:
     - tags
-  cache: []
-  services:
-    - name: docker:29.0-dind
-      alias: docker
-      command: ["--tls=false"]
-  variables:
-    DOCKER_HOST: "tcp://docker:2375"
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: ''
   script:
-    - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
-    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
     - echo $DOCKER_ACCESS_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
-    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG pwdsafe/pwdsafe:$CI_COMMIT_TAG
-    - docker push pwdsafe/pwdsafe:$CI_COMMIT_TAG
+    - docker buildx imagetools create -t pwdsafe/pwdsafe:$CI_COMMIT_TAG $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
