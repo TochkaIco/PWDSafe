@@ -71,6 +71,7 @@ code style:
     - composer
   script:
     - ./vendor/bin/pint --test
+    - npm run lint
 
 build docker:
   image: docker:29.0
