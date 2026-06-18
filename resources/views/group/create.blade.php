@@ -10,7 +10,7 @@
             </p>
         @endif
         <div class="form-group">
-            <label for="groupname" class="block text-sm font-medium leading-5 text-gray-700 dark:text-gray-300 mb-1">Group name</label>
+            <label for="groupname" class="block text-sm font-medium leading-5 text-gray-700 dark:text-gray-300 mb-1">Group name<span class="ml-0.5 text-red-500">*</span></label>
             <input
                 type="text"
                 id="groupname"

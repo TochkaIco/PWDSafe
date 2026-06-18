@@ -100,6 +100,7 @@ interface SidebarNode {
     name: string
     url: string
     credentialsCount: number
+    usersCount: number
     children: SidebarNode[]
 }
 

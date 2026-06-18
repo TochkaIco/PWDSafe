@@ -30,6 +30,11 @@
             <span class="bg-gray-100 dark:bg-gray-600 text-xs text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full font-normal">
                 {{ $credentials->count() }}
             </span>
+            @if($group->users()->count() > 1)
+                <span class="flex items-center gap-x-1 bg-gray-100 dark:bg-gray-600 text-xs text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full font-normal">
+                    <x-icons.user /> {{ $group->users()->count() }}
+                </span>
+            @endif
         </h3>
 
         <div class="flex items-center gap-x-2">

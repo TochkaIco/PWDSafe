@@ -52,7 +52,7 @@
                         >
                             <input type="hidden" name="_method" value="put" />
                             <div class="mb-2">
-                                <pwdsafe-label for="name" class="mb-1"
+                                <pwdsafe-label for="name" class="mb-1" required
                                     >Name</pwdsafe-label
                                 >
                                 <pwdsafe-input
@@ -84,7 +84,7 @@
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <pwdsafe-label for="username" class="mb-1"
+                                <pwdsafe-label for="username" class="mb-1" required
                                     >Username</pwdsafe-label
                                 >
                                 <pwdsafe-input
@@ -95,7 +95,7 @@
                             </div>
                             <div class="mb-2">
                                 <div class="mb-2 flex items-end justify-between">
-                                    <pwdsafe-label for="password" class="mb-1">
+                                    <pwdsafe-label for="password" class="mb-1" required>
                                         Password
                                     </pwdsafe-label>
                                     <pwdsafe-passwordgen
@@ -221,7 +221,12 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { toClipboard } from '@soerenmartius/vue3-clipboard'
-import { EyeIcon, EyeSlashIcon, ClipboardDocumentListIcon, ArrowTopRightOnSquareIcon } from '@heroicons/vue/24/outline'
+import {
+    EyeIcon,
+    EyeSlashIcon,
+    ClipboardDocumentListIcon,
+    ArrowTopRightOnSquareIcon,
+} from '@heroicons/vue/24/outline'
 import ShareModal from './ShareModal.vue'
 import { decryptCredential, encryptCredentialV2 } from '../vault.js'
 import { showToast } from '../composables/useToast.js'
@@ -301,7 +306,9 @@ defineExpose({
 const saveCredentials = async function () {
     const groupId = credentialint.groupid
 
-    const { data: pubkeysData } = await axios.get(`/api/groups/${groupId}/pubkeys`)
+    const { data: pubkeysData } = await axios.get(
+        `/api/groups/${groupId}/pubkeys`,
+    )
     const encrypted = await Promise.all(
         pubkeysData.users.map(async ({ id, pubkey }) => ({
             userid: id,

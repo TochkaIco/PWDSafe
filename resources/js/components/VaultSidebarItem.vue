@@ -32,10 +32,19 @@
                 <heroicons-folder-open-icon v-if="isActive" class="w-4 h-4 flex-shrink-0" />
                 <heroicons-folder-icon v-else class="w-4 h-4 flex-shrink-0" />
                 <span class="truncate">{{ node.name }}</span>
-                <span
-                    v-if="node.credentialsCount > 0"
-                    class="ml-auto flex-shrink-0 text-xs text-gray-400 dark:text-gray-500 tabular-nums"
-                >{{ node.credentialsCount }}</span>
+                <div class="ml-auto flex items-center gap-x-1.5 flex-shrink-0">
+                    <span
+                        v-if="node.usersCount > 1"
+                        class="flex items-center gap-x-0.5 text-xs text-gray-400 dark:text-gray-500 tabular-nums"
+                    >
+                        <heroicons-user-icon class="w-3 h-3" />
+                        {{ node.usersCount }}
+                    </span>
+                    <span
+                        v-if="node.credentialsCount > 0"
+                        class="ml-1 text-xs text-gray-400 dark:text-gray-500 tabular-nums"
+                    >{{ node.credentialsCount }}</span>
+                </div>
             </a>
         </div>
 
@@ -60,6 +69,7 @@ interface SidebarNode {
     name: string
     url: string
     credentialsCount: number
+    usersCount: number
     children: SidebarNode[]
 }
 

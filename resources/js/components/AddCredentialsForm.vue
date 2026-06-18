@@ -4,7 +4,7 @@
             <h3 class="mb-4 text-2xl">Add credentials</h3>
             <div class="mb-4">
                 <div class="mb-2">
-                    <pwdsafe-label class="mb-1" for="name">Name</pwdsafe-label>
+                    <pwdsafe-label class="mb-1" for="name" required>Name</pwdsafe-label>
                     <pwdsafe-input
                         type="text"
                         v-model="name"
@@ -18,13 +18,14 @@
                     <pwdsafe-label class="mb-1" for="url">URL</pwdsafe-label>
                     <pwdsafe-input
                         type="text"
+                        placeholder="https://example.com"
                         v-model="url"
                         id="url"
                         autocomplete="off"
                     ></pwdsafe-input>
                 </div>
                 <div class="mb-2">
-                    <pwdsafe-label class="mb-1" for="user">Username</pwdsafe-label>
+                    <pwdsafe-label class="mb-1" for="user" required>Username</pwdsafe-label>
                     <pwdsafe-input
                         type="text"
                         v-model="user"
@@ -35,7 +36,7 @@
                 </div>
                 <div class="mb-2">
                     <div class="mb-2 flex items-end justify-between gap-x-2">
-                        <pwdsafe-label class="mb-1" for="pass">Password</pwdsafe-label>
+                        <pwdsafe-label class="mb-1" for="pass" required>Password</pwdsafe-label>
                         <pwdsafe-passwordgen @generated="updatePassword"></pwdsafe-passwordgen>
                     </div>
                     <TextareaVue v-model="password" id="pass" rows="5" required></TextareaVue>

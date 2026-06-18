@@ -22,6 +22,10 @@ import {
     EllipsisHorizontalIcon,
     ClipboardDocumentListIcon,
     LockClosedIcon,
+    PencilSquareIcon,
+    UsersIcon,
+    ArrowDownTrayIcon,
+    ArrowUpTrayIcon,
 } from '@heroicons/vue/24/outline'
 
 import './bootstrap'
@@ -48,7 +52,10 @@ app.use(VueClipboard)
 app.component('heroicons-plus-icon', PlusIcon)
 app.component('heroicons-arrow-down-on-square-icon', ArrowDownOnSquareIcon)
 app.component('heroicons-arrow-up-on-square-icon', ArrowUpOnSquareIcon)
+app.component('heroicons-arrow-down-tray-icon', ArrowDownTrayIcon)
+app.component('heroicons-arrow-up-tray-icon', ArrowUpTrayIcon)
 app.component('heroicons-user-icon', UserIcon)
+app.component('heroicons-users-icon', UsersIcon)
 app.component('heroicons-cog-6-tooth-icon', Cog6ToothIcon)
 app.component('heroicons-trash-icon', TrashIcon)
 app.component('heroicons-key-icon', KeyIcon)
@@ -57,6 +64,7 @@ app.component('heroicons-chevron-down-icon', ChevronDownIcon)
 app.component('heroicons-folder-icon', FolderIcon)
 app.component('heroicons-folder-open-icon', FolderOpenIcon)
 app.component('heroicons-folder-plus-icon', FolderPlusIcon)
+app.component('heroicons-pencil-square-icon', PencilSquareIcon)
 app.component('heroicons-ellipsis-horizontal-icon', EllipsisHorizontalIcon)
 app.component('heroicons-clipboard-document-list-icon', ClipboardDocumentListIcon)
 app.component('heroicons-lock-closed-icon', LockClosedIcon)

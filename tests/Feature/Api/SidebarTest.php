@@ -37,7 +37,7 @@ class SidebarTest extends TestCase
         $response = $this->getJson('/api/sidebar')->assertOk();
 
         $response->assertJsonStructure([
-            'private' => ['id', 'name', 'url', 'credentialsCount', 'children'],
+            'private' => ['id', 'name', 'url', 'credentialsCount', 'usersCount', 'children'],
             'shared',
         ]);
 
