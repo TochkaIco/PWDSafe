@@ -68,7 +68,7 @@ code style:
   extends: .analysis
   script:
     - ./vendor/bin/pint --test
-    - npm run lint
+    - npm run format:check
 
 .docker:
   image: docker:29.0
