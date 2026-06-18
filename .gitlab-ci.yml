@@ -102,28 +102,39 @@ code style:
     DOCKER_HOST: "tcp://docker:2375"
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ''
+    DOCKER_BUILDKIT: 1
   before_script:
     - if [ "$CI_COMMIT_REF_NAME" = "master" ]; then TAGNAME="latest"; else TAGNAME="$CI_COMMIT_REF_NAME-latest"; fi
     - if [ $CI_COMMIT_TAG ]; then TAGNAME=$CI_COMMIT_TAG ; fi
     - echo $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
 
-build docker:
+# Builds a single-arch image with a registry-backed BuildKit layer cache.
+# Each arch keeps its own shared `buildcache-$ARCH` tag so unchanged layers are
+# pulled instead of rebuilt across pipelines. $ARCH is set by the concrete jobs.
+.build_docker:
   extends: .docker
   needs:
     - test
   script:
-    - docker build -f Dockerfile -t $CI_REGISTRY_IMAGE:$TAGNAME-amd64 .
-    - docker push $CI_REGISTRY_IMAGE:$TAGNAME-amd64
+    - docker build -f Dockerfile
+        --build-arg BUILDKIT_INLINE_CACHE=1
+        --cache-from $CI_REGISTRY_IMAGE:buildcache-$ARCH
+        -t $CI_REGISTRY_IMAGE:$TAGNAME-$ARCH
+        -t $CI_REGISTRY_IMAGE:buildcache-$ARCH .
+    - docker push $CI_REGISTRY_IMAGE:$TAGNAME-$ARCH
+    - docker push $CI_REGISTRY_IMAGE:buildcache-$ARCH
+
+build docker:
+  extends: .build_docker
+  variables:
+    ARCH: amd64
 
 build docker arm:
-  extends: .docker
+  extends: .build_docker
   tags:
     - arm
-  needs:
-    - test
-  script:
-    - docker build -f Dockerfile -t $CI_REGISTRY_IMAGE:$TAGNAME-arm64 .
-    - docker push $CI_REGISTRY_IMAGE:$TAGNAME-arm64
+  variables:
+    ARCH: arm64
 
 manifest docker:
   extends: .docker
