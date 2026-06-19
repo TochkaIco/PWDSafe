@@ -1,4 +1,5 @@
-@extends('layouts.master')
+@php $activeGroupId = null; @endphp
+@extends('layouts.vault')
 @section('content')
     <h1 class='text-2xl mb-4'>Shared credentials</h1>
     @forelse ($sharedcredentials as $sharedcredential)

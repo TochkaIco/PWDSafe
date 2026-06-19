@@ -1,4 +1,5 @@
-@extends('layouts.master')
+@php $activeGroupId = $group->id; @endphp
+@extends('layouts.vault')
 @section('content')
     <div class="container">
         <h3 class="text-2xl mb-5">{{ $group->name }}</h3>
