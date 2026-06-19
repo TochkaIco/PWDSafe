@@ -43,15 +43,39 @@
                         <pwdsafe-label class="mb-1" for="pass" required
                             >Password</pwdsafe-label
                         >
-                        <pwdsafe-passwordgen
-                            @generated="updatePassword"
-                        ></pwdsafe-passwordgen>
+                        <div class="flex items-center gap-x-2">
+                            <pwdsafe-button
+                                type="button"
+                                theme="secondary"
+                                size="small"
+                                @click="passwordVisible = !passwordVisible"
+                                :title="
+                                    passwordVisible
+                                        ? 'Hide password'
+                                        : 'Show password'
+                                "
+                            >
+                                <EyeSlashIcon
+                                    v-if="passwordVisible"
+                                    class="h-4 w-4"
+                                />
+                                <EyeIcon v-else class="h-4 w-4" />
+                            </pwdsafe-button>
+                            <pwdsafe-passwordgen
+                                @generated="updatePassword"
+                            ></pwdsafe-passwordgen>
+                        </div>
                     </div>
                     <TextareaVue
                         v-model="password"
                         id="pass"
                         rows="5"
                         required
+                        :style="{
+                            WebkitTextSecurity: passwordVisible
+                                ? 'none'
+                                : 'disc',
+                        }"
                     ></TextareaVue>
                 </div>
                 <div class="mb-2">
@@ -82,6 +106,7 @@
 </template>
 <script setup>
 import { ref } from 'vue'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
 import TextareaVue from './TextareaVue.vue'
 import { encryptCredentialV2 } from '../vault.js'
 
@@ -100,6 +125,7 @@ const name = ref('')
 const url = ref('')
 const user = ref('')
 const password = ref('')
+const passwordVisible = ref(false)
 const notes = ref('')
 const submitting = ref(false)
 
