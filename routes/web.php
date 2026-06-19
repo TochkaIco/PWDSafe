@@ -65,7 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/groups/{group}/members/{user}', [ManageGroupMembersController::class, 'update']);
     Route::get('/groups/{group}/delete', [GroupDeleteController::class, 'index']);
     Route::get('/groups/{group}/name', [GroupChangeNameController::class, 'index']);
-    Route::post('/groups/{group}/name', [GroupChangeNameController::class,'store']);
+    Route::post('/groups/{group}/name', [GroupChangeNameController::class, 'store']);
     Route::get('/pwdfor/{credential}', [PasswordForController::class, 'index']);
     Route::get('/search', function () {
         return redirect()->back();
