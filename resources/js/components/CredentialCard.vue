@@ -109,8 +109,7 @@
                                         class="mb-1"
                                         required
                                     >
-                                        Password
-                                    </pwdsafe-label>
+                                        Password</pwdsafe-label>
                                     <pwdsafe-passwordgen
                                         v-if="canUpdate"
                                         button-size="small"
